@@ -7,13 +7,13 @@ INSERT INTO public."role"
 VALUES('LIBRARIAN');
 
 INSERT INTO public.book
-(title, author, qty)
-VALUES('java', 'ben hopkins', 50);
+(isbn, title, author, qty)
+VALUES('9780072119763', 'java', 'ben hopkins', 50);
 
 INSERT INTO public.book
-(title, author, qty)
-VALUES('php', 'kenny roger', 40);
+(isbn, title, author, qty)
+VALUES('9780321121745', 'php', 'kenny roger', 40);
 
 INSERT INTO public.book
-(title, author, qty)
-VALUES('html', 'susan', 30);
+(isbn, title, author, qty)
+VALUES('9781568843308', 'html', 'susan', 30);

@@ -49,6 +49,7 @@ export class User {
 
 export class Book {
   id: number;
+  isbn: string;
   title: string;
   author: string;
   qty: number;
@@ -57,6 +58,7 @@ export class Book {
   static fromRs(r): Book {
     let o = new Book();
     o.id = Number(r.id);
+    o.isbn = r.isbn;
     o.title = r.title;
     o.author = r.author;
     o.qty = Number(r.qty);

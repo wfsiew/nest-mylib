@@ -118,10 +118,15 @@ export class BookController {
   @Post('borrow/register')
   async registerBook(@Body() data: RegisterBookDto) {
     try {
-      const book = await this.bookService.findByTitle(data.title);
+      const book = await this.bookService.findByISBN(data.isbn);
       const user = await this.userService.findByUsername(data.username);
       if (book && user) {
-        const b = await this.bookService.isBookAvailable(1);
+        const x = await this.bookService.isBorrowLimitReached(user.id);
+        if (x) {
+          throw new BadRequestException('Maximum limit of borrow books reached');
+        }
+
+        const b = await this.bookService.isBookAvailable(book.id);
         if (b) {
           await this.bookService.registerBorrow(book.id, user.id);
           return {
@@ -154,7 +159,7 @@ export class BookController {
   @Post('borrow/return')
   async returnBook(@Body() data: RegisterBookDto) {
     try {
-      const book = await this.bookService.findByTitle(data.title);
+      const book = await this.bookService.findByISBN(data.isbn);
       const user = await this.userService.findByUsername(data.username);
       if (book && user) {
         await this.bookService.returnBorrow(book.id, user.id);

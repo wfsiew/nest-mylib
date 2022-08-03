@@ -152,7 +152,7 @@ export class BookService {
     return lx;
   }
 
-  async isBookAvailable(id: number) {
+  async isBookAvailable(id: number): Promise<boolean> {
     let cli;
     let b = false;
 
@@ -174,13 +174,37 @@ export class BookService {
     return b;
   }
 
-  async findByTitle(title: string): Promise<Book> | null {
+  async isBorrowLimitReached(user_id: number): Promise<boolean> {
+    let cli;
+    let b = false;
+
+    try {
+      cli = await this.dbService.connect();
+      const res = await cli.query(`select count(user_id) from books_borrow where user_id = $1 and return_date is NULL`, [user_id]);
+      const r = res.rows[0].count;
+      let n = Number(r);
+      if (n === 10) {
+        b = true;
+      }
+      
+    } catch (error) {
+      throw error;
+    } finally {
+      if (cli) {
+        cli.release();
+      }
+    }
+
+    return b;
+  }
+
+  async findByISBN(isbn: string): Promise<Book> | null {
     let cli;
     let o = null;
 
     try {
       cli = await this.dbService.connect();
-      const res = await cli.query(`select * from book where lower(title) = lower($1) limit 1`, [title]);
+      const res = await cli.query(`select * from book where isbn = $1 limit 1`, [isbn]);
       if (res.rowCount > 0) {
         o = await Book.fromRs(res.rows[0]);
       }
