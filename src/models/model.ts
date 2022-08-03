@@ -87,6 +87,7 @@ export class BooksBorrow {
     o.user_id = r.user_id;
 
     let b = Book.fromRs(r);
+    b.id = o.book_id;
     o.book = b;
     return o;
   }

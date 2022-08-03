@@ -89,7 +89,7 @@ export class BookService {
 
     try {
       cli = await this.dbService.connect();
-      const res = await cli.query(`select bb.*, b.* from books_borrow bb inner join book b on bb.book_id = b.id where bb.user_id = $1 and bb.return_date is NULL order by bb.start_date offset $2 limit $3`, [user_id, offset, limit]);
+      const res = await cli.query(`select bb.*, b.title, b.author, b.qty, b.isbn from books_borrow bb inner join book b on bb.book_id = b.id where bb.user_id = $1 and bb.return_date is NULL order by bb.start_date offset $2 limit $3`, [user_id, offset, limit]);
       for (let i = 0; i < res.rows.length; i++) {
         const r = res.rows[i];
         const o = BooksBorrow.fromRs(r);
