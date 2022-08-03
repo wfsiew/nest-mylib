@@ -1,24 +1,23 @@
-import { BadRequestException, Body, Controller, Delete, Get, HttpCode, HttpStatus, Inject, Logger, NotFoundException, Param, Post, Put, Query, Res } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, HttpCode, HttpStatus, Inject, Logger, NotFoundException, Param, Post, Put, Query, Req, Res } from '@nestjs/common';
 import { FastifyReply } from 'fastify';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { AppConstant } from 'src/constants/app.constant';
 import { TOKEN_NAME } from 'src/constants/auth.constant';
 import { UserDto } from 'src/dto/user.dto';
+import { RegisterBookDto } from 'src/dto/book.dto';
 import { UserService } from 'src/services/user/user.service';
 import { RoleService } from 'src/services/role/role.service';
-import { BookService } from 'src/services/book/book.service';
-import { Pager } from 'src/utils/pager';
 import { User } from 'src/models/model';
 import { SkipAuth } from 'src/constants/auth.constant';
-import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOkResponse, ApiQuery, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('user-controller')
 @Controller('user')
 export class UserController {
 
   constructor(
     private readonly userService: UserService,
     private readonly roleService: RoleService,
-    private readonly bookService: BookService,
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger
   ) {}
 
@@ -50,49 +49,6 @@ export class UserController {
 
       else {
         throw new NotFoundException('Role not found');
-      }
-
-    } catch (error) {
-      this.handleError(error);
-      throw error;
-    }
-  }
-
-  @ApiBearerAuth(TOKEN_NAME)
-  @Post('register-book/:book_id/:user_id')
-  async registerBook(
-    @Param('book_id') book_id: number,
-    @Param('user_id') user_id: number
-  ) {
-    try {
-      const b = await this.bookService.isBookAvailable(1);
-      if (b) {
-        await this.bookService.registerBorrow(book_id, user_id);
-        return {
-          success: 1
-        }
-      }
-      
-      else {
-        throw new BadRequestException('Book not available');
-      }
-      
-    } catch (error) {
-      this.handleError(error);
-      throw error;
-    }
-  }
-
-  @ApiBearerAuth(TOKEN_NAME)
-  @Post('return-book/:book_id/:user_id')
-  async returnBook(
-    @Param('book_id') book_id: number,
-    @Param('user_id') user_id: number
-  ) {
-    try {
-      await this.bookService.returnBorrow(book_id, user_id);
-      return {
-        success: 1
       }
 
     } catch (error) {

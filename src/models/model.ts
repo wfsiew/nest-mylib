@@ -52,6 +52,7 @@ export class Book {
   title: string;
   author: string;
   qty: number;
+  return_date?: string;
 
   static fromRs(r): Book {
     let o = new Book();
@@ -71,6 +72,7 @@ export class BooksBorrow {
   return_date?: string;
   book_id: number;
   user_id: number;
+  book: Book;
 
   static fromRs(r): BooksBorrow {
     let o = new BooksBorrow();
@@ -81,6 +83,9 @@ export class BooksBorrow {
     o.return_date = r.return_date;
     o.book_id = r.book_id;
     o.user_id = r.user_id;
+
+    let b = Book.fromRs(r);
+    o.book = b;
     return o;
   }
 }

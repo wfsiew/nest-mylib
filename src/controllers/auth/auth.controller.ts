@@ -1,11 +1,14 @@
 import { BadRequestException, Body, Controller, Get, HttpCode, HttpStatus, Inject, Logger, NotFoundException, Post, Req, UnauthorizedException } from '@nestjs/common';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
-import { SkipAuth } from 'src/constants/auth.constant';
+import { TOKEN_NAME } from 'src/constants/auth.constant';
 import { LoginDto } from 'src/dto/login.dto';
 import { RefreshTokenDto } from 'src/dto/refreshtoken.dto';
 import { TokenService } from 'src/services/token/token.service';
 import { UserService } from 'src/services/user/user.service';
+import { SkipAuth } from 'src/constants/auth.constant';
+import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('auth-controller')
 @Controller('auth')
 export class AuthController {
 
@@ -61,6 +64,7 @@ export class AuthController {
     }
   }
 
+  @ApiBearerAuth(TOKEN_NAME)
   @Get('api/current-user')
   async userDetails(@Req() request) {
     try {

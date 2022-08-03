@@ -10,6 +10,7 @@ import { JwtAuthGuard } from './auth/jwt.auth.guard';
 import { WinstonModule } from 'nest-winston';
 import { UserController } from './controllers/user/user.controller';
 import { RoleService } from './services/role/role.service';
+import { BookController } from './controllers/book/book.controller';
 import * as winston from 'winston';
 
 @Module({
@@ -29,7 +30,7 @@ import * as winston from 'winston';
     }),
     AuthModule
   ],
-  controllers: [AppController, UserController],
+  controllers: [AppController, UserController, BookController],
   providers: [AppService, DbService, UserService, BookService, RoleService,
     {
       provide: APP_GUARD,
