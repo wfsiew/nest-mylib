@@ -279,7 +279,7 @@ export class BookService {
 
     try {
       cli = await this.dbService.connect();
-      await cli.query(`update books_borrow set has_renew = true, start_date = now(), end_date = now() + INTERVAL '30 day' where id = $1 and book_id = $2 and user_id = $3 and return_date is NULL and has_renew is not true`, [id, book_id, user_id]);
+      await cli.query(`update books_borrow set has_renew = true, end_date = end_date + INTERVAL '30 day' where id = $1 and book_id = $2 and user_id = $3 and return_date is NULL and has_renew is not true`, [id, book_id, user_id]);
       
     } catch (error) {
       throw error;
