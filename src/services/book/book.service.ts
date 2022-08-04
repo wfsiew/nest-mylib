@@ -89,7 +89,7 @@ export class BookService {
 
     try {
       cli = await this.dbService.connect();
-      const res = await cli.query(`select bb.*, b.title, b.author, b.qty, b.isbn from books_borrow bb inner join book b on bb.book_id = b.id where bb.user_id = $1 and bb.return_date is NULL order by bb.start_date offset $2 limit $3`, [user_id, offset, limit]);
+      const res = await cli.query(`select bb.*, b.title, b.author, b.qty, b.isbn, u.username from books_borrow bb inner join book b on bb.book_id = b.id inner join "user" u on bb.user_id = u.id where bb.user_id = $1 and bb.return_date is NULL order by bb.start_date offset $2 limit $3`, [user_id, offset, limit]);
       for (let i = 0; i < res.rows.length; i++) {
         const r = res.rows[i];
         const o = BooksBorrow.fromRs(r);
@@ -134,13 +134,58 @@ export class BookService {
 
     try {
       cli = await this.dbService.connect();
-      const res = await cli.query(`select bb.*, b.* from books_borrow bb inner join book b on bb.book_id = b.id where bb.user_id = $1 and bb.return_date is not NULL order by bb.start_date offset $2 limit $3`, [user_id, offset, limit]);
+      const res = await cli.query(`select bb.*, b.title, b.author, b.qty, b.isbn, u.username from books_borrow bb inner join book b on bb.book_id = b.id inner join "user" u on bb.user_id = u.id where bb.user_id = $1 and bb.return_date is not NULL order by bb.start_date offset $2 limit $3`, [user_id, offset, limit]);
       for (let i = 0; i < res.rows.length; i++) {
         const r = res.rows[i];
         const o = BooksBorrow.fromRs(r);
         lx.push(o);
       }
       
+    } catch (error) {
+      throw error;
+    } finally {
+      if (cli) {
+        cli.release();
+      }
+    }
+
+    return lx;
+  }
+
+  async countAllBooksBorrow(): Promise<number> {
+    let cli;
+    let n = 0;
+
+    try {
+      cli = await this.dbService.connect();
+      const res = await cli.query(`select count(book_id) from books_borrow`);
+      const r = res.rows[0].count;
+      n = Number(r);
+
+    } catch (error) {
+      throw error;
+    } finally {
+      if (cli) {
+        cli.release();
+      }
+    }
+
+    return n;
+  }
+
+  async findAllBooksBorrow(offset: number, limit: number): Promise<BooksBorrow[]> {
+    let cli;
+    let lx: BooksBorrow[] = [];
+
+    try {
+      cli = await this.dbService.connect();
+      const res = await cli.query(`select bb.*, b.*, u.username from books_borrow bb inner join book b on bb.book_id = b.id inner join "user" u on bb.user_id = u.id order by bb.start_date offset $1 limit $2`, [offset, limit]);
+      for (let i = 0; i < res.rows.length; i++) {
+        const r = res.rows[i];
+        const o = BooksBorrow.fromRs(r);
+        lx.push(o);
+      }
+
     } catch (error) {
       throw error;
     } finally {

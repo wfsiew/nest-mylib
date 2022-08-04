@@ -75,6 +75,7 @@ export class BooksBorrow {
   book_id: number;
   user_id: number;
   book: Book;
+  user: User;
 
   static fromRs(r): BooksBorrow {
     let o = new BooksBorrow();
@@ -89,6 +90,11 @@ export class BooksBorrow {
     let b = Book.fromRs(r);
     b.id = o.book_id;
     o.book = b;
+
+    let u = new User();
+    u.id = o.user_id;
+    u.username = r.username;
+    o.user = u;
     return o;
   }
 }

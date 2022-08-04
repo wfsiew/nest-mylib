@@ -114,6 +114,34 @@ export class BookController {
     }
   }
 
+  @ApiQuery({
+    name: '_page'
+  })
+  @ApiQuery({
+    name: '_limit',
+    description: 'page size'
+  })
+  @ApiBearerAuth(TOKEN_NAME)
+  @Get('borrow/all')
+  async listBooksAll(
+    @Query('_page') page = '1',
+    @Query('_limit') limit = '20',
+    @Res({ passthrough: true }) res: FastifyReply
+  ) {
+    try {
+      const total = await this.bookService.countAllBooksBorrow();
+      const pg = new Pager(total, Number(page), Number(limit));
+      const lx = this.bookService.findAllBooksBorrow(pg.lowerBound, pg.pageSize);
+      res.header(AppConstant.X_TOTAL_COUNT, `${total}`);
+      res.header(AppConstant.X_TOTAL_PAGE, `${pg.totalPages}`);
+      return lx;
+      
+    } catch (error) {
+      this.handleError(error);
+      throw error;
+    }
+  }
+
   @ApiBearerAuth(TOKEN_NAME)
   @Post('borrow/register')
   async registerBook(@Body() data: RegisterBookDto) {
