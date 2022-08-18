@@ -1,3 +1,5 @@
+import { Exclude } from "class-transformer";
+
 export class Role {
   id: number;
   name: string;
@@ -13,6 +15,8 @@ export class Role {
 export class User {
   id: number;
   username: string;
+
+  @Exclude({ toPlainOnly: true })
   password: string;
 
   roles: Role[];

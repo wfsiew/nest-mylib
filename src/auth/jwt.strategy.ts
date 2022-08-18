@@ -3,6 +3,7 @@ import { PassportStrategy } from '@nestjs/passport'
 import { ExtractJwt, Strategy } from 'passport-jwt'
 import { AppConstant } from 'src/constants/app.constant';
 import { UserService } from 'src/services/user/user.service';
+import { AuthUser } from './models';
 
 export interface AccessTokenPayload {
   sub: number;
@@ -22,7 +23,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: AccessTokenPayload): Promise<any> | null {
+  async validate(payload: AccessTokenPayload): Promise<AuthUser> | null {
     const user = await this.userService.findById(payload.sub);
     if (!user) {
       return null;

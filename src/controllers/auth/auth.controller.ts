@@ -7,6 +7,8 @@ import { TokenService } from 'src/services/token/token.service';
 import { UserService } from 'src/services/user/user.service';
 import { SkipAuth } from 'src/constants/auth.constant';
 import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { AuthenticatedUser } from 'src/auth/auth-user.decorator';
+import { AuthUser } from 'src/auth/models';
 
 @ApiTags('auth-controller')
 @Controller()
@@ -66,9 +68,8 @@ export class AuthController {
 
   @ApiBearerAuth(TOKEN_NAME)
   @Get('api/current-user')
-  async userDetails(@Req() request) {
+  async userDetails(@AuthenticatedUser() o: AuthUser) {
     try {
-      const o = request.user;
       const user = await this.userService.findById(o.id);
 
       if (user) {

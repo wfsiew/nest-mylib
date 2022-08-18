@@ -6,6 +6,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { AppConstant } from './constants/app.constant';
 import { TOKEN_NAME } from './constants/auth.constant';
 import { ErrorFilter } from './utils/error.filter';
+import { TransformInterceptor } from './utils/transform.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter({ 
@@ -19,6 +20,7 @@ async function bootstrap() {
   });
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new ErrorFilter());
+  app.useGlobalInterceptors(new TransformInterceptor());
 
   // Swagger
   const config = new DocumentBuilder()

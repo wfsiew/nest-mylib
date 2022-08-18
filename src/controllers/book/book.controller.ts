@@ -10,6 +10,8 @@ import { Pager } from 'src/utils/pager';
 import { User } from 'src/models/model';
 import { SkipAuth } from 'src/constants/auth.constant';
 import { ApiBearerAuth, ApiOkResponse, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { AuthUser } from 'src/auth/models';
+import { AuthenticatedUser } from 'src/auth/auth-user.decorator';
 
 @ApiTags('book-controller')
 @Controller('book')
@@ -68,13 +70,14 @@ export class BookController {
   async listBooksCurrent(
     @Query('_page') page = '1',
     @Query('_limit') limit = '20',
+    @AuthenticatedUser() user: AuthUser,
     @Res({ passthrough: true }) res: FastifyReply,
     @Req() request
   ) {
     try {
-      const total = await this.bookService.countCurrentBooksBorrowByUserId(request.user.id);
+      const total = await this.bookService.countCurrentBooksBorrowByUserId(user.id);
       const pg = new Pager(total, Number(page), Number(limit));
-      const lx = this.bookService.findAllCurrentBooksBorrowByUserId(request.user.id, pg.lowerBound, pg.pageSize);
+      const lx = this.bookService.findAllCurrentBooksBorrowByUserId(user.id, pg.lowerBound, pg.pageSize);
       res.header(AppConstant.X_TOTAL_COUNT, `${total}`);
       res.header(AppConstant.X_TOTAL_PAGE, `${pg.totalPages}`);
       return lx;
@@ -97,13 +100,14 @@ export class BookController {
   async listBooksHistory(
     @Query('_page') page = '1',
     @Query('_limit') limit = '20',
+    @AuthenticatedUser() user: AuthUser,
     @Res({ passthrough: true }) res: FastifyReply,
     @Req() request
   ) {
     try {
-      const total = await this.bookService.countHistoryBooksBorrowByUserId(request.user.id);
+      const total = await this.bookService.countHistoryBooksBorrowByUserId(user.id);
       const pg = new Pager(total, Number(page), Number(limit));
-      const lx = this.bookService.findAllHistoryBooksBorrowByUserId(request.user.id, pg.lowerBound, pg.pageSize);
+      const lx = this.bookService.findAllHistoryBooksBorrowByUserId(user.id, pg.lowerBound, pg.pageSize);
       res.header(AppConstant.X_TOTAL_COUNT, `${total}`);
       res.header(AppConstant.X_TOTAL_PAGE, `${pg.totalPages}`);
       return lx;
@@ -217,10 +221,11 @@ export class BookController {
   async renewBook(
     @Param('id') id: number,
     @Param('book_id') book_id: number,
+    @AuthenticatedUser() user: AuthUser,
     @Req() request
   ) {
     try {
-      await this.bookService.renewBorrow(id, book_id, request.user.id);
+      await this.bookService.renewBorrow(id, book_id, user.id);
       return {
         success: 1
       }
