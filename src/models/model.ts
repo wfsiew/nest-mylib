@@ -23,9 +23,8 @@ export class User {
 
   static async fromRs(r, cli): Promise<User> {
     let o = new User();
+    o = { ...r };
     o.id = Number(r.id);
-    o.username = r.username;
-    o.password = r.password;
 
     await User.setRoles(o, cli);
     return o;
@@ -61,10 +60,8 @@ export class Book {
 
   static fromRs(r): Book {
     let o = new Book();
+    o = { ...r };
     o.id = Number(r.id);
-    o.isbn = r.isbn;
-    o.title = r.title;
-    o.author = r.author;
     o.qty = Number(r.qty);
     return o;
   }
@@ -83,13 +80,10 @@ export class BooksBorrow {
 
   static fromRs(r): BooksBorrow {
     let o = new BooksBorrow();
+    o = { ...r };
     o.id = Number(r.id);
-    o.has_renew = r.has_renew;
-    o.start_date = r.start_date;
-    o.end_date = r.end_date;
-    o.return_date = r.return_date;
-    o.book_id = r.book_id;
-    o.user_id = r.user_id;
+    o.book_id = Number(r.book_id);
+    o.user_id = Number(r.user_id);
 
     let b = Book.fromRs(r);
     b.id = o.book_id;
