@@ -1,5 +1,5 @@
 import { BadRequestException, Body, Controller, Delete, Get, HttpCode, HttpStatus, Inject, Logger, NotFoundException, Param, Post, Put, Query, Req, Res } from '@nestjs/common';
-import { FastifyReply } from 'fastify';
+import { FastifyRequest, FastifyReply } from 'fastify';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { AppConstant } from 'src/constants/app.constant';
 import { TOKEN_NAME } from 'src/constants/auth.constant';
@@ -12,6 +12,9 @@ import { SkipAuth } from 'src/constants/auth.constant';
 import { ApiBearerAuth, ApiOkResponse, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { AuthUser } from 'src/auth/models';
 import { AuthenticatedUser } from 'src/auth/auth-user.decorator';
+import * as fs from 'fs';
+import stream = require('stream');
+import * as util from 'util';
 
 @ApiTags('book-controller')
 @Controller('book')
@@ -234,5 +237,20 @@ export class BookController {
       this.handleError(error);
       throw error;
     }
+  }
+
+  @SkipAuth()
+  @Post('upload')
+  async uploadBook(@Req() req: FastifyRequest, @Res() res: FastifyReply) {
+    const data = await req.file();
+    const pipeline = util.promisify(stream.pipeline);
+    const writeStream = fs.createWriteStream(`uploads/${data.filename}`);
+    try {
+      await pipeline(data.file, writeStream);
+    } catch (error) {
+      console.error('Pipeline failed', error);
+    }
+    
+    return;
   }
 }
