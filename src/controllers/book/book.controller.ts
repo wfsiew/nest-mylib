@@ -12,9 +12,9 @@ import { SkipAuth } from 'src/constants/auth.constant';
 import { ApiBearerAuth, ApiOkResponse, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { AuthUser } from 'src/auth/models';
 import { AuthenticatedUser } from 'src/auth/auth-user.decorator';
-// import * as fs from 'fs';
-// import stream = require('stream');
-// import * as util from 'util';
+import * as fs from 'fs';
+import stream = require('stream');
+import * as util from 'util';
 
 @ApiTags('book-controller')
 @Controller('book')
@@ -245,9 +245,12 @@ export class BookController {
     const data = await req.file();
     // const pipeline = util.promisify(stream.pipeline);
     // const writeStream = fs.createWriteStream(`uploads/${data.filename}`);
+    // await pipeline(data.file, writeStream);
     const o = await data.toBuffer();
     const x = o.toString('base64');
-    const s = `data:${data.mimetype};base64, ${x}`;
+    const m = data.fields.mimeType['value'];
+    const s = `data:${m};base64,${x}`;
+    console.log(s)
     
     return s;
   }
