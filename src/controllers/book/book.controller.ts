@@ -1,5 +1,5 @@
-import { BadRequestException, Body, Controller, Delete, Get, HttpCode, HttpStatus, Inject, Logger, NotFoundException, Param, Post, Put, Query, Req, Res } from '@nestjs/common';
-import { FastifyRequest, FastifyReply } from 'fastify';
+import { BadRequestException, Body, Controller, Delete, Get, HttpCode, HttpStatus, Inject, Logger, NotFoundException, Param, Post, Put, Query, Req, Res, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { Request, Response } from 'express';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { AppConstant } from 'src/constants/app.constant';
 import { TOKEN_NAME } from 'src/constants/auth.constant';
@@ -15,6 +15,7 @@ import { AuthenticatedUser } from 'src/auth/auth-user.decorator';
 import * as fs from 'fs';
 import stream = require('stream');
 import * as util from 'util';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('book-controller')
 @Controller('book')
@@ -45,7 +46,7 @@ export class BookController {
   async listBooks(
     @Query('_page') page = '1',
     @Query('_limit') limit = '20',
-    @Res({ passthrough: true }) res: FastifyReply
+    @Res({ passthrough: true }) res: Response
   ) {
     try {
       const total = await this.bookService.count();
@@ -74,7 +75,7 @@ export class BookController {
     @Query('_page') page = '1',
     @Query('_limit') limit = '20',
     @AuthenticatedUser() user: AuthUser,
-    @Res({ passthrough: true }) res: FastifyReply,
+    @Res({ passthrough: true }) res: Response,
     @Req() request
   ) {
     try {
@@ -104,7 +105,7 @@ export class BookController {
     @Query('_page') page = '1',
     @Query('_limit') limit = '20',
     @AuthenticatedUser() user: AuthUser,
-    @Res({ passthrough: true }) res: FastifyReply,
+    @Res({ passthrough: true }) res: Response,
     @Req() request
   ) {
     try {
@@ -133,7 +134,7 @@ export class BookController {
   async listBooksAll(
     @Query('_page') page = '1',
     @Query('_limit') limit = '20',
-    @Res({ passthrough: true }) res: FastifyReply
+    @Res({ passthrough: true }) res: Response
   ) {
     try {
       const total = await this.bookService.countAllBooksBorrow();
@@ -240,18 +241,28 @@ export class BookController {
   }
 
   @SkipAuth()
+  @UseInterceptors(FileInterceptor('image'))
   @Post('upload')
-  async uploadBook(@Req() req: FastifyRequest, @Res({ passthrough: true }) res: FastifyReply) {
-    const data = await req.file();
-    // const pipeline = util.promisify(stream.pipeline);
-    // const writeStream = fs.createWriteStream(`uploads/${data.filename}`);
-    // await pipeline(data.file, writeStream);
-    const o = await data.toBuffer();
+  async uploadBook(@UploadedFile() file: Express.Multer.File, @Req() req: Request, @Res({ passthrough: true }) res: Response) {
+    console.log(file)
+    console.log(req.body.mimeType)
+    const o = file.buffer;
     const x = o.toString('base64');
-    const m = data.fields.mimeType['value'];
+    const m = req.body.mimeType;
     const s = `data:${m};base64,${x}`;
     console.log(s)
-    
     return s;
+
+    // const data = await req.file();
+    // // const pipeline = util.promisify(stream.pipeline);
+    // // const writeStream = fs.createWriteStream(`uploads/${data.filename}`);
+    // // await pipeline(data.file, writeStream);
+    // const o = await data.toBuffer();
+    // const x = o.toString('base64');
+    // const m = data.fields.mimeType['value'];
+    // const s = `data:${m};base64,${x}`;
+    // console.log(s)
+    
+    // return s;
   }
 }

@@ -1,22 +1,17 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 import { AppConstant } from './constants/app.constant';
 import { TOKEN_NAME } from './constants/auth.constant';
 import { ErrorFilter } from './utils/error.filter';
 import { TransformInterceptor } from './utils/transform.interceptor';
-import fmp from '@fastify/multipart';
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter({ 
-    logger: {
-      level: 'error'
-    }
-  }));
+  const app = await NestFactory.create(AppModule, { 
+    logger: ['log', 'error']
+  });
   app.setGlobalPrefix('/lib');
-  app.register(fmp);
   app.enableCors({
     exposedHeaders: ['Authorization', 'filename', AppConstant.X_TOTAL_COUNT, AppConstant.X_TOTAL_PAGE]
   });

@@ -1,5 +1,5 @@
 import { BadRequestException, Body, Controller, Delete, Get, HttpCode, HttpStatus, Inject, Logger, NotFoundException, Param, Post, Put, Query, Req, Res } from '@nestjs/common';
-import { FastifyReply } from 'fastify';
+import { Response } from 'express';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { AppConstant } from 'src/constants/app.constant';
 import { TOKEN_NAME } from 'src/constants/auth.constant';

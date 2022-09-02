@@ -21,14 +21,11 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@fastify/multipart": "^7.1.0",
-    "@fastify/static": "^6.5.0",
     "@nestjs/common": "^9.0.0",
     "@nestjs/core": "^9.0.0",
     "@nestjs/jwt": "^9.0.0",
     "@nestjs/passport": "^9.0.0",
     "@nestjs/platform-express": "^9.0.0",
-    "@nestjs/platform-fastify": "^9.0.7",
     "@nestjs/swagger": "^6.0.4",
     "bcrypt": "^5.0.1",
     "class-transformer": "^0.5.1",
@@ -56,6 +53,7 @@
     "@types/express": "^4.17.13",
     "@types/jest": "28.1.4",
     "@types/jsonwebtoken": "^8.5.8",
+    "@types/multer": "^1.4.7",
     "@types/node": "^16.0.0",
     "@types/passport-jwt": "^3.0.6",
     "@types/passport-local": "^1.0.34",
