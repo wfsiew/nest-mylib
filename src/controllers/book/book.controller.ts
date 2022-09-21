@@ -244,7 +244,7 @@ export class BookController {
   @SkipAuth()
   @UseInterceptors(FileInterceptor('image'))
   @Post('upload')
-  async uploadBook(@Body() body: RegisterBookDto, @UploadedFile() file: Express.Multer.File, @Req() req: Request, @Res({ passthrough: true }) res: Response) {
+  async uploadBook(@Body() body: RegisterBookDto, @UploadedFile() file: Express.Multer.File, @Res({ passthrough: true }) res: Response) {
     console.log(file)
     console.log(body)
     const o = file.buffer;
