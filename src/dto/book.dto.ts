@@ -1,5 +1,5 @@
 import { IsNotEmpty } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class RegisterBookDto {
 
@@ -10,4 +10,7 @@ export class RegisterBookDto {
   @ApiProperty()
   @IsNotEmpty({ message: 'Username is required' })
   readonly username: string;
+
+  @ApiPropertyOptional({ type: 'string', format: 'binary' })
+  image: Express.Multer.File;
 }

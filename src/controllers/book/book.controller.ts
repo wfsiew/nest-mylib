@@ -9,7 +9,7 @@ import { BookService } from 'src/services/book/book.service';
 import { Pager } from 'src/utils/pager';
 import { User } from 'src/models/model';
 import { SkipAuth } from 'src/constants/auth.constant';
-import { ApiBearerAuth, ApiOkResponse, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiConsumes, ApiOkResponse, ApiQuery, ApiTags, ApiBody } from '@nestjs/swagger';
 import { AuthUser } from 'src/auth/models';
 import { AuthenticatedUser } from 'src/auth/auth-user.decorator';
 import * as fs from 'fs';
@@ -240,18 +240,19 @@ export class BookController {
     }
   }
 
+  @ApiConsumes('multipart/form-data')
   @SkipAuth()
   @UseInterceptors(FileInterceptor('image'))
   @Post('upload')
-  async uploadBook(@UploadedFile() file: Express.Multer.File, @Req() req: Request, @Res({ passthrough: true }) res: Response) {
+  async uploadBook(@Body() body: RegisterBookDto, @UploadedFile() file: Express.Multer.File, @Req() req: Request, @Res({ passthrough: true }) res: Response) {
     console.log(file)
-    console.log(req.body.mimeType)
+    console.log(body)
     const o = file.buffer;
     const x = o.toString('base64');
-    const m = req.body.mimeType;
-    const s = `data:${m};base64,${x}`;
-    console.log(s)
-    return s;
+    // const m = req.body.mimeType;
+    // const s = `data:${m};base64,${x}`;
+    // console.log(s)
+    return 'done';
 
     // const data = await req.file();
     // // const pipeline = util.promisify(stream.pipeline);
