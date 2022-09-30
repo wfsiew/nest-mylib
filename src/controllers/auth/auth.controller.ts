@@ -9,7 +9,6 @@ import { SkipAuth } from 'src/constants/auth.constant';
 import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { AuthenticatedUser } from 'src/auth/auth-user.decorator';
 import { AuthUser } from 'src/auth/models';
-import { instanceToPlain } from 'class-transformer';
 
 @ApiTags('auth-controller')
 @Controller()

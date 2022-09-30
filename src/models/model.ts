@@ -16,7 +16,7 @@ export class User {
   id: number;
   username: string;
 
-  @Exclude()
+  @Exclude({ toPlainOnly: true })
   password: string;
 
   roles: Role[];
