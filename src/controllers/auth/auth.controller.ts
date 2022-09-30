@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Get, HttpCode, HttpStatus, Inject, Logger, NotFoundException, Post, Req, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Body, ClassSerializerInterceptor, Controller, Get, HttpCode, HttpStatus, Inject, Logger, NotFoundException, Post, Req, UnauthorizedException, UseInterceptors } from '@nestjs/common';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { TOKEN_NAME } from 'src/constants/auth.constant';
 import { LoginDto } from 'src/dto/login.dto';

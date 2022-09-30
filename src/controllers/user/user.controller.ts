@@ -36,7 +36,7 @@ export class UserController {
 
       const role = await this.roleService.findById(data.role_id);
       if (role) {
-        let o = new User();
+        let o = new User({});
         o.username = data.username;
         o.password = data.password;
 

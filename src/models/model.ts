@@ -16,22 +16,27 @@ export class User {
   id: number;
   username: string;
 
-  @Exclude({ toPlainOnly: true })
+  @Exclude()
   password: string;
 
   roles: Role[];
 
+  constructor(partial: Partial<User>) {
+    Object.assign(this, partial);
+  }
+
   static async fromRs(r, cli): Promise<User> {
-    let o = new User();
-    o = { ...r };
+    let o = new User(r);
     o.id = Number(r.id);
+    // o.username = r.username;
+    // o.password = r.password;
 
     await User.setRoles(o, cli);
     return o;
   }
 
   static async fromRsNoPwd(r, cli): Promise<User> {
-    let o = new User();
+    let o = new User(r);
     o.id = Number(r.id);
     o.username = r.username;
 
@@ -89,7 +94,7 @@ export class BooksBorrow {
     b.id = o.book_id;
     o.book = b;
 
-    let u = new User();
+    let u = new User({});
     u.id = o.user_id;
     u.username = r.username;
     o.user = u;
