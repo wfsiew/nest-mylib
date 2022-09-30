@@ -9,6 +9,7 @@ import { SkipAuth } from 'src/constants/auth.constant';
 import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { AuthenticatedUser } from 'src/auth/auth-user.decorator';
 import { AuthUser } from 'src/auth/models';
+import { instanceToPlain } from 'class-transformer';
 
 @ApiTags('auth-controller')
 @Controller()
@@ -73,11 +74,12 @@ export class AuthController {
       const user = await this.userService.findById(o.id);
 
       if (user) {
-        return {
-          id: user.id,
-          username: user.username,
-          roles: user.roles
-        }
+        // return {
+        //   id: user.id,
+        //   username: user.username,
+        //   roles: user.roles
+        // }
+        return user;
       }
 
       else {
